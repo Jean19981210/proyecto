@@ -1,0 +1,15 @@
+
+=== Training with Target FS=32 Hz and Window Size=1 s ===
+
+=== Loading AEROBIC ===
+Traceback (most recent call last):
+  File "/home/jcordova/proyecto/graciasgpt.py", line 401, in <module>
+    X, y, in_channels, states = load_all_states(base_path, window_seconds, target_fs)
+                                ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jcordova/proyecto/graciasgpt.py", line 105, in load_all_states
+    signal_data, fs_data = read_signals(os.path.join(base_path, state))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jcordova/proyecto/graciasgpt.py", line 55, in read_signals
+    subfolders = next(os.walk(main_folder))[1]
+                 ~~~~^^^^^^^^^^^^^^^^^^^^^^
+StopIteration
