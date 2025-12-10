@@ -25,6 +25,14 @@ OVERLAP = 0.0              # 0 = no overlap, 0.5 = 50% overlap
 BALANCEAR = True           # Enable or disable class balancing
 PROCESAR_PAPER = False    # Apply preprocessing as per the referenced paper
 
+# Small hyperparameter search space for the CNN+BiLSTM
+HYPERPARAM_CONFIGS = [
+    {"cnn_channels": 8,  "lstm_hidden": 16, "lstm_layers": 1, "dropout": 0.5, "lr": 1e-3},
+    {"cnn_channels": 16, "lstm_hidden": 32, "lstm_layers": 1, "dropout": 0.5, "lr": 1e-3},
+    {"cnn_channels": 16, "lstm_hidden": 64, "lstm_layers": 2, "dropout": 0.5, "lr": 1e-3},
+    {"cnn_channels": 8,  "lstm_hidden": 32, "lstm_layers": 2, "dropout": 0.3, "lr": 5e-4},
+]
+
 # =====================================================
 # DATA LOADING AND PREPROCESSING
 # =====================================================
@@ -412,8 +420,50 @@ if __name__ == "__main__":
             val_loader = DataLoader(TimeSeriesDataset(X_val, y_val), batch_size=4096, shuffle=False)
             test_loader = DataLoader(TimeSeriesDataset(X_test, y_test), batch_size=4096, shuffle=False)
 
-            model = CNNBiLSTM(in_channels=in_channels, num_classes=2).to(device)  # 7 channels: EDA, BVP, HR, TEMP, ACC_x, ACC_y, ACC_z
-            modelname = f"model_FS{target_fs}_WS{window_seconds}"
-            train_model(modelname, train_loader, val_loader, test_loader, model, device, epochs=2000, lr=1e-3)
+            # model = CNNBiLSTM(in_channels=in_channels, num_classes=2).to(device)  # 7 channels: EDA, BVP, HR, TEMP, ACC_x, ACC_y, ACC_z
+            # modelname = f"model_FS{target_fs}_WS{window_seconds}"
+            # train_model(modelname, train_loader, val_loader, test_loader, model, device, epochs=2000, lr=1e-3)
+
+            # ---- LOOP OVER HYPERPARAMETER CONFIGS ----
+            for cfg_idx, cfg in enumerate(HYPERPARAM_CONFIGS):
+                print(
+                    f"\n--- Config {cfg_idx+1}/{len(HYPERPARAM_CONFIGS)} "
+                    f"(FS={target_fs}, WS={window_seconds}) ---\n"
+                    f"cnn_channels={cfg['cnn_channels']}, "
+                    f"lstm_hidden={cfg['lstm_hidden']}, "
+                    f"lstm_layers={cfg['lstm_layers']}, "
+                    f"dropout={cfg['dropout']}, lr={cfg['lr']}"
+                )
+
+                model = CNNBiLSTM(
+                    in_channels=in_channels,
+                    num_classes=2,
+                    cnn_channels=cfg["cnn_channels"],
+                    lstm_hidden=cfg["lstm_hidden"],
+                    lstm_layers=cfg["lstm_layers"],
+                    dropout=cfg["dropout"],
+                ).to(device)
+
+                modelname = (
+                    f"model_FS{target_fs}_WS{window_seconds}"
+                    f"_cfg{cfg_idx}"
+                    f"_cnn{cfg['cnn_channels']}"
+                    f"_lstm{cfg['lstm_hidden']}"
+                    f"_layers{cfg['lstm_layers']}"
+                    f"_do{cfg['dropout']}"
+                    f"_lr{cfg['lr']}"
+                )
+
+                # You can lower epochs here if this becomes too slow
+                train_model(
+                    modelname,
+                    train_loader,
+                    val_loader,
+                    test_loader,
+                    model,
+                    device,
+                    epochs=2000,
+                    lr=cfg["lr"],
+                )
 
     print("Training complete.")
