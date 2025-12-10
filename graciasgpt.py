@@ -19,8 +19,8 @@ from preprocessing import apply_full_preprocessing
 DEBUG_PRINT = True
 TARGETS_FS = [32, 64]              # Target resampling frequency in Hz
 # TARGETS_FS = [64]              # Target resampling frequency in Hz
-WINDOWS_SECONDS = [1, 3, 5, 10, 20, 30]         # Length of each window (seconds)
-# WINDOWS_SECONDS = [10]         # Length of each window (seconds)
+# WINDOWS_SECONDS = [1, 3, 5, 10, 20, 30]         # Length of each window (seconds)
+WINDOWS_SECONDS = [1]         # Length of each window (seconds)
 OVERLAP = 0.0              # 0 = no overlap, 0.5 = 50% overlap
 BALANCEAR = True           # Enable or disable class balancing
 PROCESAR_PAPER = False    # Apply preprocessing as per the referenced paper
