@@ -1,1 +1,1 @@
-proyecto deep learning
+El código de proyecto de TÉCNICAS AVANZADAS DE DATA MINING Y SISTEMAS INTELIGENTES es el main.py
